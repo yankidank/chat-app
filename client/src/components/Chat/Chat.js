@@ -18,7 +18,8 @@ export const Chat = ({ location }) => {
   const [users, setUsers] = useState('');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-  const ENDPOINT = 'https://react-chat-page.herokuapp.com/';
+  const ENDPOINT = 'http://localhost:5000/';
+  // const ENDPOINT = 'https://react-chat-page.herokuapp.com/';
 
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export const Chat = ({ location }) => {
     socket = io(ENDPOINT);
 
     setRoom(room);
-    setName(name)
+    setName(name);
 
     socket.emit('join', { name, room }, (error) => {
       if(error) {
@@ -46,6 +47,14 @@ export const Chat = ({ location }) => {
     });
 }, []);
 
+  const sendLine= (event) => {
+    event.preventDefault();
+
+    if(message) {
+      socket.emit('sendLine', message, () => setMessage(message+' '));
+    }
+  }
+
   const sendMessage = (event) => {
     event.preventDefault();
 
@@ -61,7 +70,7 @@ export const Chat = ({ location }) => {
       <div className="container">
           <InfoBar room={room} />
           <Messages messages={messages} name={name} />
-          <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
+          <Input message={message} setMessage={setMessage} sendLine={sendLine} sendMessage={sendMessage} />
       </div>
     </div>
   );
